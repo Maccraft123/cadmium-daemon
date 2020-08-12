@@ -37,14 +37,14 @@ int main(int argc, char **argv)
 		if ((z_lid - z_base) > -100 && tablet != 'Y')
 		{
 			tablet = 'Y';
-			system("./handle T");
+			system("handle T");
 		}
 		
 		if ((z_lid - z_base) < 100 && tablet != 'N')
 		{
 			tablet = 'N';
-			system("./handle LP");
-			system("./handle N"); // Rotate back to normal, to use laptop like normal
+			system("handle LP");
+			system("handle N"); // Rotate back to normal, to use laptop like normal
 		}
 		
 		
@@ -58,7 +58,7 @@ int main(int argc, char **argv)
 		{
 			if (rotation != 'R' && tablet == 'Y')
 			{
-				system("./handle R");
+				system("handle R");
 				rotation = 'R';
 			}
 		}
@@ -67,7 +67,7 @@ int main(int argc, char **argv)
 		{
 			if (rotation != 'L' && tablet == 'Y')
 			{
-				system("./handle L");
+				system("handle L");
 				rotation = 'L';
 			}
 		}
@@ -76,7 +76,7 @@ int main(int argc, char **argv)
 		{
 			if (rotation != 'N')
 			{
-				system("./handle N");
+				system("handle N");
 				rotation = 'N';
 			}
 		}
