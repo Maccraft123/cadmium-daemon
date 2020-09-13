@@ -1,2 +1,2 @@
 default:
-	gcc daemon.c -o daemon -O2
+	gcc daemon.c -o daemon -Wextra

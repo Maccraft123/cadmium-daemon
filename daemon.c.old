@@ -16,70 +16,65 @@
 
 int main(int argc, char **argv)
 {
-	//setvbuf(stdout, NULL, _IONBF, 0);
+	setvbuf(stdout, NULL, _IONBF, 0);
 	// Output values of accelerometer
 	short		x_base = 0;
-	//short		y_base = 0;
+	short		y_base = 0;
 	short		z_base = 0;
-	//short		x_lid = 0;
-	//short		y_lid = 0;
+	short		x_lid = 0;
+	short		y_lid = 0;
 	short		z_lid = 0;
 
-	char		mode = '?';
-
-	//FILE		*xlfd;
-	//FILE		*ylfd;
+	FILE		*xlfd;
+	FILE		*ylfd;
 	FILE		*zlfd;
 	FILE		*xbfd;
-	//FILE		*ybfd;
+	FILE		*ybfd;
 	FILE		*zbfd;
-
-	int		trip = 0;
 
 	while (1)
 	{
-		//xlfd	= fopen(X_PATH_LID, "r");
-		//fscanf(xlfd, "%hd", &x_lid);
-		//fclose(xlfd);
+	
+		xlfd	= fopen(X_PATH_LID, "r");
+		fscanf(xlfd, "%hd", &x_lid);
+		fclose(xlfd);
 
-		//ylfd	= fopen(Y_PATH_LID, "r");
-		//fscanf(ylfd, "%hd", &x_lid);
-		//fclose(ylfd);
+		ylfd	= fopen(Y_PATH_LID, "r");
+		fscanf(ylfd, "%hd", &x_lid);
+		fclose(ylfd);
 
-		zlfd    = fopen(Z_PATH_LID, "r");
-		fscanf(zlfd, "%hd", &z_lid);
-		fclose(zlfd);
+                zlfd    = fopen(Z_PATH_LID, "r");
+                fscanf(zlfd, "%hd", &z_lid);
+                fclose(zlfd);
 
-        	xbfd    = fopen(X_PATH_BASE, "r");
-        	fscanf(xbfd, "%hd", &x_base);
-        	fclose(xbfd);
+                xbfd    = fopen(X_PATH_BASE, "r");
+                fscanf(xbfd, "%hd", &x_base);
+                fclose(xbfd);
 
-		//ybfd	= fopen(Y_PATH_BASE, "r");
-		//fscanf(ybfd, "%hd", &y_base);
-		//fclose(ybfd);
+		ybfd	= fopen(Y_PATH_BASE, "r");
+		fscanf(ybfd, "%hd", &y_base);
+		fclose(ybfd);
 
                 zbfd    = fopen(Z_PATH_BASE, "r");
                 fscanf(zbfd, "%hd", &z_base);
                 fclose(zbfd);
-			
-		if (abs(z_base/32) - z_lid/32 > trip) // tablet
-		{
-			if (mode != 'T' && abs(x_base) < 900)
-			{
-				system("./handle T");
-				mode	= 'T';
-				trip = -20;
-			}
-		}	
+		
+		if (abs(abs(x_base/64) - abs(x_lid/64)) < 10)
+			printf("x %d\t", abs(abs(x_base/128) - abs(x_lid/128)));
 		else
-		{
-			if (mode != 'L' && abs(x_base) < 900)
-			{
-				system("./handle LP");
-				mode	= 'L';
-				trip = 20;
-			}
-			usleep(1000);
-		}
+			printf("  \t");
+
+                if (abs(abs(y_base/64) - abs(y_lid/64)) < 10)
+                        printf("y %d\t", abs(abs(y_base/128) - abs(y_lid/128)));
+		else
+			printf("  \t");
+
+                if (abs(abs(z_base/64) - abs(z_lid/64)) < 10)
+                        printf("z %d\t\r", abs(abs(z_base/128) - abs(z_lid/128)));
+		else
+			printf("  \t\r");
+
+		//printf("%i\n", abs(x_base/100) + abs(x_lid/100) + abs(y_base/100) - abs(y_lid/100) - abs(z_base/100) - abs(z_lid/100));
+		usleep(1000);
 	}
 }
