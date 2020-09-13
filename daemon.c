@@ -79,7 +79,7 @@ int main(int argc, char **argv)
 				mode	= 'L';
 				trip = 20;
 			}
-			usleep(1000);
 		}
+		usleep(100000);
 	}
 }
