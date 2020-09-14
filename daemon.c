@@ -20,6 +20,8 @@
 #include	<unistd.h>
 #include	<stdlib.h>
 #include	<math.h>
+#include	<linux/input.h>
+#include	<fcntl.h>
 
 int main(int argc, char **argv)
 {
@@ -40,6 +42,12 @@ int main(int argc, char **argv)
 	FILE		*xbfd;
 	//FILE		*ybfd;
 	FILE		*zbfd;
+#ifdef GNOME
+	int		kbfd;
+	int		tpfd;
+	tpfd = open("/dev/input/event7", O_RDONLY); //TODO: dynamically do it
+	kbfd = open("/dev/input/event0", O_RDONLY);
+#endif
 
 	int		trip = 0;
 
@@ -68,12 +76,18 @@ int main(int argc, char **argv)
                 zbfd    = fopen(Z_PATH_BASE, "r");
                 fscanf(zbfd, "%hd", &z_base);
                 fclose(zbfd);
-			
+
 		if (abs(z_base/32) - z_lid/32 > trip) // tablet
 		{
 			if (mode != 'T' && abs(x_base) < 900)
 			{
+#ifdef GNOME
+				printf("Grabbing touchpad and keyboard\n");
+				ioctl(kbfd, EVIOCGRAB, (void*)1);
+				ioctl(tpfd, EVIOCGRAB, (void*)1);
+#else
 				system("./handle T");
+#endif
 				mode	= 'T';
 				trip = -20;
 			}
@@ -82,7 +96,13 @@ int main(int argc, char **argv)
 		{
 			if (mode != 'L' && abs(x_base) < 900)
 			{
+#ifdef GNOME
+				printf("Ungrabbing touchpad and keyboard\n");
+				ioctl(kbfd, EVIOCGRAB, (void*)0);
+				ioctl(tpfd, EVIOCGRAB, (void*)0);
+#else
 				system("./handle LP");
+#endif
 				mode	= 'L';
 				trip = 20;
 			}
