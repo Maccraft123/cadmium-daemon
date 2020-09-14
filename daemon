@@ -8,4 +8,4 @@ case "$device" in
 	*) exit 0;;
 esac
 
-exec ./daemon_$flav
+exec daemon_$flav
