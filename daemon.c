@@ -1,5 +1,6 @@
 #ifdef C100
-
+#define KBDEV "/dev/input/by-path/platform-ff110000.spi-cs-0-platform-ff110000.spi:ec@0:keyboard-controller-event-kbd"
+#define TPDEV "/dev/input/by-path/platform-ff160000.i2c-event-mouse"
 #define X_PATH_BASE "/sys/devices/platform/ff110000.spi/spi_master/spi0/spi0.0/cros-ec-dev.1.auto/cros-ec-sensorhub.2.auto/cros-ec-accel-legacy.8.auto/iio:device1/in_accel_x_raw"
 #define Z_PATH_BASE "/sys/devices/platform/ff110000.spi/spi_master/spi0/spi0.0/cros-ec-dev.1.auto/cros-ec-sensorhub.2.auto/cros-ec-accel-legacy.8.auto/iio:device1/in_accel_z_raw"
 #define Y_PATH_BASE "/sys/devices/platform/ff110000.spi/spi_master/spi0/spi0.0/cros-ec-dev.1.auto/cros-ec-sensorhub.2.auto/cros-ec-accel-legacy.8.auto/iio:device1/in_accel_y_raw"
@@ -8,6 +9,8 @@
 #define Z_PATH_LID "/sys/devices/platform/ff110000.spi/spi_master/spi0/spi0.0/cros-ec-dev.1.auto/cros-ec-sensorhub.2.auto/cros-ec-accel-legacy.7.auto/iio:device0/in_accel_z_raw"
 
 #else
+#define KBDEV "TODO"
+#define TPDEV "TODO"
 #define X_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_x_raw"
 #define Z_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_z_raw"
 #define Y_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_y_raw"
@@ -45,8 +48,8 @@ int main(int argc, char **argv)
 #ifdef GNOME
 	int		kbfd;
 	int		tpfd;
-	tpfd = open("/dev/input/event7", O_RDONLY); //TODO: dynamically do it
-	kbfd = open("/dev/input/event0", O_RDONLY);
+	tpfd = open(TPDEV, O_RDONLY); //TODO: dynamically do it
+	kbfd = open(KBDEV, O_RDONLY);
 #endif
 
 	int		trip = 0;
