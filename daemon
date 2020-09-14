@@ -1,0 +1,11 @@
+#!/bin/bash
+
+device=$(tr -d '\0' < /sys/firmware/devicetree/base/model)
+case "$device" in
+	"Google Minnie") flav=minnie;;
+	"Google Kevin") flav=kevin;;
+	"Google Bob") flav=todo;;
+	*) exit 0;;
+esac
+
+exec ./daemon_$flav
