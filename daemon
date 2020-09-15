@@ -11,4 +11,4 @@ esac
 [ "$flav" = "todo" ] && exit 0
 [ "$flav" = "kevin" ] && exit 0 # need to check /dev/input/by-path
 
-exec daemon_$flav
+exec /opt/bin/daemon_$flav

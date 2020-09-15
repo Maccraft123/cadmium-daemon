@@ -1,0 +1,10 @@
+[Unit]
+Description=C100PA daemon for tp/kb disabling
+ConditionPathExists=/opt/bin/daemon
+
+[Service]
+ExecStart=/opt/bin/daemon
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target
