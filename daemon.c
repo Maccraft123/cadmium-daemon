@@ -45,12 +45,10 @@ int main(int argc, char **argv)
 	FILE		*xbfd;
 	//FILE		*ybfd;
 	FILE		*zbfd;
-#ifdef GNOME
 	int		kbfd;
 	int		tpfd;
-	tpfd = open(TPDEV, O_RDONLY); //TODO: dynamically do it
+	tpfd = open(TPDEV, O_RDONLY);
 	kbfd = open(KBDEV, O_RDONLY);
-#endif
 
 	int		trip = 0;
 
@@ -84,13 +82,9 @@ int main(int argc, char **argv)
 		{
 			if (mode != 'T' && abs(x_base) < 900)
 			{
-#ifdef GNOME
 				printf("Grabbing touchpad and keyboard\n");
 				ioctl(kbfd, EVIOCGRAB, (void*)1);
 				ioctl(tpfd, EVIOCGRAB, (void*)1);
-#else
-				system("./handle T");
-#endif
 				mode	= 'T';
 				trip = -20;
 			}
@@ -99,13 +93,9 @@ int main(int argc, char **argv)
 		{
 			if (mode != 'L' && abs(x_base) < 900)
 			{
-#ifdef GNOME
 				printf("Ungrabbing touchpad and keyboard\n");
 				ioctl(kbfd, EVIOCGRAB, (void*)0);
 				ioctl(tpfd, EVIOCGRAB, (void*)0);
-#else
-				system("./handle LP");
-#endif
 				mode	= 'L';
 				trip = 20;
 			}
