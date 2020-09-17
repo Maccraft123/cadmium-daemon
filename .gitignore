@@ -1,5 +1,4 @@
-daemon_minnie
-daemon_kevin
+daemon_*
 
 # Prerequisites
 *.d
