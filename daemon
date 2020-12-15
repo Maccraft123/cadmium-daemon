@@ -9,7 +9,6 @@ case "$device" in
 esac
 
 [ "$flav" = "todo" ] && exit 0
-[ "$flav" = "kevin" ] && exit 0 # need to check /dev/input/by-path
 
 sleep 30
 

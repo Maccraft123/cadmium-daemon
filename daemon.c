@@ -9,8 +9,8 @@
 #define Z_PATH_LID "/sys/devices/platform/ff110000.spi/spi_master/spi0/spi0.0/cros-ec-dev.1.auto/cros-ec-sensorhub.2.auto/cros-ec-accel-legacy.7.auto/iio:device0/in_accel_z_raw"
 
 #else
-#define KBDEV "TODO"
-#define TPDEV "TODO"
+#define KBDEV "/dev/input/by-path/platform-ff200000.spi-cs-0-platform-ff200000.spi:ec@0:keyboard-controller-event-kbd"
+#define TPDEV "/dev/input/by-path/platform-ff140000.i2c-event-mouse"
 #define X_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_x_raw"
 #define Z_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_z_raw"
 #define Y_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_y_raw"
@@ -86,7 +86,7 @@ int main(int argc, char **argv)
 				ioctl(kbfd, EVIOCGRAB, (void*)1);
 				ioctl(tpfd, EVIOCGRAB, (void*)1);
 				mode	= 'T';
-				trip = -20;
+				trip	= -50;
 			}
 		}	
 		else
@@ -97,7 +97,7 @@ int main(int argc, char **argv)
 				ioctl(kbfd, EVIOCGRAB, (void*)0);
 				ioctl(tpfd, EVIOCGRAB, (void*)0);
 				mode	= 'L';
-				trip = 20;
+				trip	= 50;
 			}
 		}
 		usleep(100000);
