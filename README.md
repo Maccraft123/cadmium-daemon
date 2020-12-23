@@ -1,4 +1,5 @@
 # c100pa-daemon
-This is daemon for c100pa running mainline linux(PrawnOS)
+This is daemon for chromebooks running mainline linux(PrawnOS or Cadmium)
 
-To use it change handle file to reflect your compositor choice(wayland) or to use xrandr/xinput
+## Dependencies:
+- touchpad, keyboard and iio x,y,z device paths added(refer to source code)
