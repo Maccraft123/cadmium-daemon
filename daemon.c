@@ -12,6 +12,10 @@
 #ifdef KEVIN
 #define KBDEV "/dev/input/by-path/platform-ff200000.spi-cs-0-platform-ff200000.spi:ec@0:keyboard-controller-event-kbd"
 #define TPDEV "/dev/input/by-path/platform-ff140000.i2c-event-mouse"
+#define TSDEV "/dev/input/by-path/platform-ff130000.i2c-event"
+
+#define PENDEV "/dev/input/by-path/platform-gpio-keys-event"
+
 #define X_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_x_raw"
 #define Z_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_z_raw"
 #define Y_PATH_BASE "/sys/devices/platform/ff200000.spi/spi_master/spi2/spi2.0/cros-ec-dev.0.auto/cros-ec-sensorhub.1.auto/cros-ec-accel.13.auto/iio:device3/in_accel_y_raw"
@@ -50,6 +54,16 @@ int main(int argc, char **argv)
 	int		tpfd;
 	tpfd = open(TPDEV, O_RDONLY);
 	kbfd = open(KBDEV, O_RDONLY);
+	
+	#ifdef PENDEV
+	int		tsfd;
+	int		penfd;
+	tsfd = open(TSDEV, O_RDONLY);
+	penfd = open(PENDEV, O_RDONLY);
+
+	struct		input_event ev[64];
+	int		rd;
+	#endif
 
 	int		trip = 0;
 
@@ -79,6 +93,8 @@ int main(int argc, char **argv)
                 fscanf(zbfd, "%hd", &z_base);
                 fclose(zbfd);
 
+
+
 		if (abs(z_base/32) - z_lid/32 > trip) // tablet
 		{
 			if (mode != 'T' && abs(x_base) < 900)
@@ -101,6 +117,19 @@ int main(int argc, char **argv)
 				trip	= 50;
 			}
 		}
+		#ifdef PENDEV
+		rd = read(penfd, ev, sizeof(struct input_event) * 64);
+		for (int i = 0; i < rd / sizeof(struct input_event); i++)
+		{
+			if (ev[i].type == EV_SW)
+			{
+				if(ev[i].value == 0)
+					ioctl(tsfd, EVIOCGRAB, (void*)1);
+				else
+					ioctl(tsfd, EVIOCGRAB, (void*)0);
+			}
+		}
+		#endif
 		usleep(100000);
 	}
 }
