@@ -33,103 +33,125 @@
 
 int main(int argc, char **argv)
 {
-	//setvbuf(stdout, NULL, _IONBF, 0);
-	// Output values of accelerometer
-	short		x_base = 0;
-	//short		y_base = 0;
-	short		z_base = 0;
-	//short		x_lid = 0;
-	//short		y_lid = 0;
-	short		z_lid = 0;
+	pid_t pid = fork();
 
-	char		mode = '?';
+	if(pid == -1)
+		return 2;
 
-	//FILE		*xlfd;
-	//FILE		*ylfd;
-	FILE		*zlfd;
-	FILE		*xbfd;
-	//FILE		*ybfd;
-	FILE		*zbfd;
-	int		kbfd;
-	int		tpfd;
-	tpfd = open(TPDEV, O_RDONLY);
-	kbfd = open(KBDEV, O_RDONLY);
-	
-	#ifdef PENDEV
-	int		tsfd;
-	int		penfd;
-	tsfd = open(TSDEV, O_RDONLY);
-	penfd = open(PENDEV, O_RDONLY);
-
-	struct		input_event ev[64];
-	int		rd;
-	#endif
-
-	int		trip = 0;
-
-	while (1)
+#ifdef PENDEV
+	if(pid == 0)
 	{
-		//xlfd	= fopen(X_PATH_LID, "r");
-		//fscanf(xlfd, "%hd", &x_lid);
-		//fclose(xlfd);
+		int             tsfd;
+		int             penfd;
+		tsfd = open(TSDEV, O_RDONLY);
+		penfd = open(PENDEV, O_RDONLY);
 
-		//ylfd	= fopen(Y_PATH_LID, "r");
-		//fscanf(ylfd, "%hd", &x_lid);
-		//fclose(ylfd);
-
-		zlfd    = fopen(Z_PATH_LID, "r");
-		fscanf(zlfd, "%hd", &z_lid);
-		fclose(zlfd);
-
-        	xbfd    = fopen(X_PATH_BASE, "r");
-        	fscanf(xbfd, "%hd", &x_base);
-        	fclose(xbfd);
-
-		//ybfd	= fopen(Y_PATH_BASE, "r");
-		//fscanf(ybfd, "%hd", &y_base);
-		//fclose(ybfd);
-
-                zbfd    = fopen(Z_PATH_BASE, "r");
-                fscanf(zbfd, "%hd", &z_base);
-                fclose(zbfd);
-
-
-
-		if (abs(z_base/32) - z_lid/32 > trip) // tablet
+		struct          input_event ev[64];
+		int             rd;
+		while(1)
 		{
-			if (mode != 'T' && abs(x_base) < 900)
+			rd = read(penfd, ev, sizeof(struct input_event) * 64);
+			for (int i = 0; i < rd / sizeof(struct input_event); i++)
 			{
-				printf("Grabbing touchpad and keyboard\n");
-				ioctl(kbfd, EVIOCGRAB, (void*)1);
-				ioctl(tpfd, EVIOCGRAB, (void*)1);
-				mode	= 'T';
-				trip	= -50;
+				if (ev[i].type == EV_SW)
+				{
+					if(ev[i].value == 0)
+					{
+						printf("Grabbing touchscreen\n");
+						ioctl(tsfd, EVIOCGRAB, (void*)1);
+					}
+					else
+					{
+						printf("Ungrabbing touchscreen\n");
+						ioctl(tsfd, EVIOCGRAB, (void*)0);
+					}
+				}
 			}
-		}	
-		else
-		{
-			if (mode != 'L' && abs(x_base) < 900)
-			{
-				printf("Ungrabbing touchpad and keyboard\n");
-				ioctl(kbfd, EVIOCGRAB, (void*)0);
-				ioctl(tpfd, EVIOCGRAB, (void*)0);
-				mode	= 'L';
-				trip	= 50;
-			}
+			usleep(100000);
+
 		}
-		#ifdef PENDEV
-		rd = read(penfd, ev, sizeof(struct input_event) * 64);
-		for (int i = 0; i < rd / sizeof(struct input_event); i++)
-		{
-			if (ev[i].type == EV_SW)
-			{
-				if(ev[i].value == 0)
-					ioctl(tsfd, EVIOCGRAB, (void*)1);
-				else
-					ioctl(tsfd, EVIOCGRAB, (void*)0);
-			}
-		}
-		#endif
-		usleep(100000);
 	}
+	else
+	{
+#endif
+
+		//setvbuf(stdout, NULL, _IONBF, 0);
+		// Output values of accelerometer
+		short           x_base = 0;
+		//short         y_base = 0;
+		short           z_base = 0;
+		//short         x_lid = 0;
+		//short         y_lid = 0;
+		short           z_lid = 0;
+
+		char            mode = '?';
+
+		//FILE          *xlfd;
+		//FILE          *ylfd;
+		FILE            *zlfd;
+		FILE            *xbfd;
+		//FILE          *ybfd;
+		FILE            *zbfd;
+		int             kbfd;
+		int             tpfd;
+		tpfd = open(TPDEV, O_RDONLY);
+		kbfd = open(KBDEV, O_RDONLY);
+
+		int             trip = 0;
+
+		while (1)
+		{
+			//xlfd	= fopen(X_PATH_LID, "r");
+			//fscanf(xlfd, "%hd", &x_lid);
+			//fclose(xlfd);
+
+			//ylfd	= fopen(Y_PATH_LID, "r");
+			//fscanf(ylfd, "%hd", &x_lid);
+			//fclose(ylfd);
+
+			zlfd    = fopen(Z_PATH_LID, "r");
+			fscanf(zlfd, "%hd", &z_lid);
+			fclose(zlfd);
+
+			xbfd    = fopen(X_PATH_BASE, "r");
+			fscanf(xbfd, "%hd", &x_base);
+			fclose(xbfd);
+
+			//ybfd	= fopen(Y_PATH_BASE, "r");
+			//fscanf(ybfd, "%hd", &y_base);
+			//fclose(ybfd);
+
+			zbfd    = fopen(Z_PATH_BASE, "r");
+			fscanf(zbfd, "%hd", &z_base);
+			fclose(zbfd);
+
+
+
+			if (abs(z_base/32) - z_lid/32 > trip) // tablet
+			{
+				if (mode != 'T' && abs(x_base) < 900)
+				{
+					printf("Grabbing touchpad and keyboard\n");
+					ioctl(kbfd, EVIOCGRAB, (void*)1);
+					ioctl(tpfd, EVIOCGRAB, (void*)1);
+					mode	= 'T';
+					trip	= -50;
+				}
+			}	
+			else
+			{
+				if (mode != 'L' && abs(x_base) < 900)
+				{
+					printf("Ungrabbing touchpad and keyboard\n");
+					ioctl(kbfd, EVIOCGRAB, (void*)0);
+					ioctl(tpfd, EVIOCGRAB, (void*)0);
+					mode	= 'L';
+					trip	= 50;
+				}
+			}
+			usleep(100000);
+		}
+	#ifdef PENDEV
+	}
+	#endif
 }
